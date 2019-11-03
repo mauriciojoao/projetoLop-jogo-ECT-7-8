@@ -1,0 +1,262 @@
+var x = 200;
+var y = 330; 
+var xe = [];   
+var ye = [];   
+var xdispJogador;
+var ydispJogador;
+var xdispInimigo;
+var ydispInimigo;
+var disparo = false;
+var life = 3;
+var score = 0;
+var level = 1;
+var raioJogador = 25;
+var raioInimigo = 25;
+var raioDisparo = 2.5;
+var cont = 0;
+var tela = 1;
+var xtut = 280;
+var ytut = 270;
+var xdisptut; // xtut
+var ydisptut = 270;
+var xtut2 = 280;
+var ytut2 = 130;
+
+ function setup() {
+  createCanvas(400, 400);
+ 
+   for (cont = 0; cont < 3; cont++){
+    xe[cont] = random(30, 370);
+    ye[cont] = 70;
+ }
+}
+
+ function draw() {
+  //Inicio (Tela 1)
+  if (tela == 1){
+   background(0);
+  textSize(20);
+  fill(255, 255, 0);
+  text("SPACE WARRIOR", 110, 90);
+  fill(255, 255, 255);
+  text("Aperte Enter para começar o tutorial", 35, 350);
+  text("Uma chuva de meteóros ameaça o", 40, 200);
+  text(" planeta Terra, você foi designado para", 21, 220);
+  text("salvar nossas vidas!", 100, 240);
+  if (keyIsDown(ENTER)){
+  tela = 2;  
+   }
+  }
+  //Fim (Tela 1)
+
+  //Inicio (Tela 2)
+  if(tela == 2){
+    background(0);
+    fill(255, 255, 255);
+    text("Tutorial:", 160, 50);
+    text("Aperte Shift para iniciar a aventura", 42, 350);
+    if (keyIsDown(SHIFT)){
+      tela = 3;
+    }
+    //Inicio (Disparo tutorial)
+    ellipse(xtut, ytut, 2*raioJogador, 2*raioJogador);
+    
+    ellipse(xtut, ydisptut, 2*raioDisparo, 2*raioDisparo);
+    ydisptut = ydisptut - 1.5;
+    if (ydisptut < 200){
+      ydisptut = 270;
+    }
+    //Fim
+    
+    //Inicio(Movimentação tutorial)
+    ellipse(xtut2, ytut2, 2*raioJogador, 2*raioJogador);
+    xtut2 = xtut2 + 0.5;
+    if(xtut2 >= 300){
+     xtut2 = 300;
+    }if(xtut2 == 300){
+     xtut2 = xtut2 - 0.5;
+    }
+    //Fim
+  }
+  //Fim (Tela 2)
+   
+  //Inicio (Tela 3)
+  if (tela == 3){ 
+  background(0);
+
+  fill(255, 255, 255);    //102, 153 
+  textSize(20);
+  text("LIFE: "+life, 10, 30);
+  text("SCORE: "+score, 130, 30);
+  text("LEVEL: "+level, 300, 30);
+
+  //Inicio(Jogador)
+  ellipse( x, y, 2*raioJogador, 2*raioJogador)
+  //Fim280
+   
+  //Inicio (Movimentação do jogador)
+  if (keyIsDown(RIGHT_ARROW)){
+    x = x + 2;  
+  }
+
+  if (keyIsDown(LEFT_ARROW)){  
+    x = x - 2;
+  }
+
+  if (keyIsDown(UP_ARROW)){
+    y = y - 2;
+  }  
+
+  if (keyIsDown(DOWN_ARROW)){
+    y = y + 2;
+  }
+  //Fim
+   
+  //Inicio (Limitar area do jogador) 
+  if (y < 70){
+    y = 70;
+  }
+  if (y > 370){
+    y = 370;
+  }
+  if (x < 30){
+    x = 30;
+  }
+  if (x > 370){
+    x = 370;
+  }
+  //Fim 
+   
+  //Inicio (Disparo do jogador) 
+  if (keyIsDown(CONTROL) && !disparo){
+    xdispJogador = x; 
+    ydispJogador = y;
+    disparo = true
+
+  }
+
+  if (disparo == true){
+  ellipse(xdispJogador, ydispJogador, 2*raioDisparo, 2*raioDisparo);
+  ydispJogador = ydispJogador - 3.5;
+  
+    if(ydispJogador < 0){
+      disparo = false;
+   }
+  }
+  //Fim
+  
+  //Inicio (Inimigo) 
+  for (cont = 0; cont < 3; cont++){ 
+  ellipse( xe[cont], ye[cont], 2*raioInimigo, 2*raioInimigo)//Inimigo
+  ye[cont] = ye[cont] + 0.25;
+  
+   
+  if ( ye[cont] > 420){
+    ye[cont] = 70;
+    xe[cont] = random (30, 370);
+  }
+  //Fim
+  
+  //Inicio (Distancia entre jogador e inimigo)  
+  if (dist(x, y, xe[cont], ye[cont]) < raioJogador + raioInimigo){
+    x = 200;
+    y = 330;
+    life = life - 1;
+    xe[cont] = random(30, 370);
+    ye[cont] = 70;
+   }
+   //Fim 
+    
+   //Inicio (Distancia entre disparo e inimigo) 
+   if (dist(xe[cont], ye[cont], xdispJogador, ydispJogador) < raioDisparo + raioInimigo){
+     score = score + 20;
+     xe[cont] = random(30, 370);
+     ye[cont] = 70;
+     disparo = false;
+   }       
+   //Fim 
+
+}
+
+  //Inicio (Definir o score e o nivel)
+  for (cont = 0; cont < 3; cont++){ 
+   if (score >= 200 && score < 400){
+    level = 2;
+    ye[cont] = ye[cont] + 1;
+  } 
+   if (score >= 400 & score < 600){
+    level = 3;
+    ye[cont] = ye[cont] + 2; 
+  }
+   if (score >= 600 & score < 800){  
+    level = 4;
+    ye[cont] = ye[cont] + 3; 
+  }
+  if (score >= 800){  
+    level = 5;
+    ye[cont] = ye[cont] + 4; 
+  } 
+ }
+ 
+  //Fim 
+  
+  if(life == 0){
+    tela = 4;
+  }
+  if(score == 1000){
+    tela = 5;
+  }
+ }
+  // Fim (Tela 3)
+   
+  //Inicio (Tela 4)
+  if (tela == 4){
+  background(0);
+  textSize(20);
+  fill(255, 0, 0);
+  text("FIM DE JOGO", 130, 50);
+  fill(255, 255, 255);  
+  text("Você falhou!", 140, 100);
+  text("Aperte Espaço para jogar novamente", 32, 350);
+  text("Life: "+life, 160, 195);
+  text("Score: "+score, 160, 220);
+  text("Level: "+level, 160, 245);
+  if (keyIsDown(32)){
+  tela = 1; 
+  life = 3; 
+  score = 0;
+  level = 1;
+  xe[cont] = random(30, 370);
+  ye[cont] = 70;  
+  xtut2 = 280;
+   }
+  }
+  //Fim (Tela 4) 
+   
+  //Inicio (Tela 5)
+  if (tela == 5){
+  background(0);
+  textSize(20);
+  fill(0, 255, 0);
+  text("VOCÊ GANHOU", 120, 50);
+  fill(255, 255, 255);
+  text("Você salvou o planeta!", 99, 100);
+  text("Life: "+life, 160, 195);
+  text("Score: "+score, 160, 220);
+  text("Level: "+level, 160, 245);
+  text("Aperte Espaço para jogar novamente", 32, 350);
+  if (keyIsDown(32)){
+  tela = 1; 
+  life = 3; 
+  score = 0;
+  level = 1;
+  xe[cont] = random(30, 370);
+  ye[cont] = 70;
+  xtut2 = 280;  
+  
+   }
+  }
+  //Fim (Tela 5)
+   
+   
+}  
